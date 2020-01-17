@@ -21,3 +21,7 @@ employee.code = 123; //Compiler Error: Property 'code' does not exist on type '{
 var a; // *** string or number is ok
 a = 1;
 a = '1';
+var str3 = 'aaa';
+str3 = '2';
+var obj3 = {};
+obj3.name = 3;

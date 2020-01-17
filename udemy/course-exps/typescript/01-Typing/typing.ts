@@ -34,3 +34,6 @@ employee.code = 123; //Compiler Error: Property 'code' does not exist on type '{
 var a: string | number; // *** string or number is ok
 a = 1;
 a = '1';
+
+let str3 = 'aaa';
+str3 = '2';
