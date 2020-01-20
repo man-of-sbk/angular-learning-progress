@@ -1,4 +1,4 @@
-# 1. getting started
+# `1. GETTING STARTED`
 
 ## 1. course introduction
 
@@ -50,7 +50,7 @@ Offers more features than vanilla Js such as: type checking, classes, interfaces
 
 we can add global css files to an Angular project created by Angular Cli by heading toward `angular.json` file & find `"styles"` property staying inside `"build"` object. Finally, add css file path to the property. Take a note that we have to define a full path to  `node_modules` folder if we want to add css files from it.
 
-# 32. bonus typescript introduction
+# `32. BONUS TYPESCRIPT INTRODUCTION`
 
 ## 1. introduction
 Install typescript: `npm install typescript -g` in order to compile typescript files.
@@ -191,7 +191,7 @@ Generics (`<T>`) is used to preserving the type information user pass to the `ge
 
 Take a note that `T` only refers to a type, it could not be used as a value.
 
-# 2. the basics
+# `2. THE BASICS`
 
 ## 1. module introduction
 
@@ -359,7 +359,7 @@ nothings
 
 ## 17. Passing and Using Data with Event Binding
 
-we can get event information with `event binding` by using `$event` alias.
+we can get the first argument of an event's callback by using `$event` alias. This alias will return everything an event's callback receives (not only the default argument of it).
 
 *component's template:*
 ```html
@@ -379,7 +379,7 @@ onUpdateServerName(
 }
 ```
 
-`event.target` is Instance of `HTMLInputElement` & `event` is instance of `Event`. In addition, `HTMLInputElement` &  `Event` are global variable which could be access everywhere in our application. Therefore, we could utilize `HTMLInputElement` & `Event` as 2 value types.
+the `event.target` `above` is an Instance of `HTMLInputElement` & `event` is instance of `Event`. In addition, `HTMLInputElement` &  `Event` are global variable which could be access everywhere in our application. Therefore, we could utilize `HTMLInputElement` & `Event` as 2 value types.
 
 ## 18. two-way databinding
 
@@ -406,7 +406,267 @@ nothings
 nothings
 
 ## 21. Understanding Directives
+
 a `directive` is used to change, control the behavior, appearance of the DOM.
 
-## 22.
-[continue from here]
+## 22. Using ngIf to Output Data Conditionally
+
+**structure directive** are ones created using `*` keyword.
+
+## 23. Enhancing ngIf with an Else Condition
+
+**local reference** (read later) is like a variable refering to a DOM ele in a template. **local reference** is declared using `#` keyword.
+
+```html
+<input type="text" #firstNameInput>
+<button (click)="show(lastNameInput)">Show</button>
+
+<!-- *** "show" function of button component -->
+show(lastName: HTMLInputElement){
+    console.log(lastName.value);
+}
+```
+
+**ng-template** is a special component which is used like a variable containing components.
+
+```html
+<!-- if - else in template -->
+<p *ngIf="serverCreated; else noServer">
+  server was created, it's name is {{ serverName }}
+</p>
+
+<!-- noServer is a variable containing the 'p' component -->
+<ng-template #noServer>
+  <p>no server was created</p>
+</ng-template>
+```
+
+## 24. Styling Elements Dynamically with ngStyle
+
+**attribute directive** are ones used just like an attribute of an component.
+
+**property binding for directive**: `property binding` can be utilized so as to set value of a property of a `directive` by just put the target `directive` into a pair of `[]`. Then, we will assign the `directive` to an `object` whose properties presents the ones of the `directive`.
+
+```html
+<p [ngStyle]="{'background-color': getColor()}">server component {{ getServerStatus() }}</p>
+
+<p [ngStyle]="{backgroundColor: getColor()}">server component {{ getServerStatus() }}</p>
+```
+
+## 25. Applying CSS Classes Dynamically with ngClass
+
+`ngClass` is used to change class of a component dynamically.
+
+```html
+<p
+    [ngClass]="{online: serverStatus === 'online'}"
+>
+  server component
+</p>
+```
+
+## 26. Outputting Lists with ngFor
+
+`*ngFor`
+
+```html
+<!-- if we have 5 server => 5 app-server will be printed -->
+<app-server *ngFor="let server of servers">
+</app-server>
+```
+
+## 27. [OPTIONAL] Assignment Solution
+
+nothings
+
+## 28. Getting the Index when using ngFor
+
+```html
+<app-server
+    *ngFor="let server of servers; let i = index"
+></app-server>
+```
+
+# `3. COURSE PROJECT - THE BASIC`
+
+## 1. Project Introduction
+
+nothing
+
+## 2. planning the app
+
+nothing
+
+## 3. Setting up the Application
+
+nothing
+
+## 4. Creating the Components
+
+create a component without test file
+
+```
+$ ng g c recipes --spec false
+```
+
+create a component inside a folder
+
+```
+$ ng g c recipes/recipe-list --spec false
+```
+
+## 5. Using the Components
+
+nothing
+
+## 6. Adding a Navigation Bar
+
+nothings
+
+## 7. Creating a Recipe Model
+
+nothing
+
+## 8. Adding Content to the Recipes Components
+
+create an object type using class:
+
+```ts
+export class Recipe {
+    name: string;
+    description: string;
+    imagePath: string;
+
+    constructor(
+        name: string,
+        desc: string,
+        imagePath: string
+    ) {
+        this.name = name;
+        this.description = desc;
+        this.imagePath = imagePath;
+    }
+}
+```
+
+find free-copyrighted images on gg:
+1. go to gg & search sth.
+
+2. choose `tools`, under the left hand side of the search bar.
+
+3. choose `Usage rights`.
+
+4. choose `labeled for reuse with modification`.
+
+every attr of a DOM ele in Angular template are `input property`.
+
+**Property binding [ ... ]** notice:
+If we pass an object, array or a value calculated by some operators, we will need to put the property inside a pair of `[]` in order to tell Angular that the value we pass to the property is not a string, calculate it.
+
+```html
+<!-- "product.name + 'details'" is not a string, calculate it -->
+<a [title]="product.name + 'details'">
+	{{ product.name }}
+</a>
+```
+
+If we don't put a property's name to a pair of [], Angular will treat the value we pass to the property as a string.
+
+```html
+<!-- "product.name + 'details'" is treated as a string -->
+<a title="product.name + 'details'">
+	{{ product.name }}
+</a>
+```
+
+## 9. Displaying Recipe Details
+
+nothing
+
+## 10. Working on the ShoppingListComponent
+
+nothing
+
+## 11. Creating an Ingredient Model
+
+to create a class's property, just simply add an argument + it's type + it's `access modifiers` (this is mandatory) to a class's `constructor` function, the argument will be instantiated as a property of the class `automatically` & it will be assigned to the value the argument receives.
+
+```ts
+export class Ingredient {
+  constructor(
+    // *** create a public property named 'name', whose value is the first argument of this class.
+      public name: string,
+      public amount: number
+  ) {}
+}
+```
+
+## 12. Creating and Outputting the Shopping List
+
+nothing
+
+## 13. Adding a Shopping List Edit Section
+
+nothing
+
+## 14. Wrap Up & Next Steps
+
+nothing
+
+# `4. DEBUGGING`
+
+## 1. Understanding Angular Error Messages
+
+nothing
+
+## 2. Debugging Code in the Browser Using Sourcemaps
+
+nothing
+
+## 3. Using Augury to Dive into Angular Apps
+
+`augury` is tool helping us debug Angular app.
+
+# `5. Components & Databinding Deep Dive`
+
+## 1. Module Introduction
+
+nothing
+
+## 2. Splitting Apps into Components
+
+nothing
+
+## 3. Property & Event Binding Overview
+
+nothing
+
+## 4. Binding to Custom Properties
+
+nothing
+
+## 5. Assigning an Alias to Custom Properties
+
+create an alias for an `input property`.
+
+```ts
+@Input('inputContent') content: string;
+
+// *** utilize property's alias
+// *** <app-test [inputContent]="aaa"></app-test>
+```
+
+## 6. Binding to Custom Events
+
+nothing
+
+## 7. Assigning an Alias to Custom Events
+
+nothing
+
+## 8. Custom Property and Event Binding Summary
+
+nothing
+
+## 9. Understanding View Encapsulation
+[continue here]
