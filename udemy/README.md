@@ -359,7 +359,7 @@ nothings
 
 ## 17. Passing and Using Data with Event Binding
 
-we can get the first argument of an event's callback by using `$event` alias. This alias will return everything an event's callback receives (not only the default argument of it).
+we can get the argument of an event's callback by using `$event` alias. This alias will return everything an event's callback receives (not only the default argument of it).
 
 *component's template:*
 ```html
@@ -377,6 +377,17 @@ onUpdateServerName(
 ) {
 	this.serverName = (event.target as HTMLInputElement).value;
 }
+```
+
+we can still get `default argument` of an event even when we manually pass one or more argument to it by using `$event`.
+
+```ts
+<a
+    href="#"
+    (click)="onSelect('recipe', $event)"
+>
+test
+</a>
 ```
 
 the `event.target` `above` is an Instance of `HTMLInputElement` & `event` is instance of `Event`. In addition, `HTMLInputElement` &  `Event` are global variable which could be access everywhere in our application. Therefore, we could utilize `HTMLInputElement` & `Event` as 2 value types.
@@ -415,7 +426,7 @@ a `directive` is used to change, control the behavior, appearance of the DOM.
 
 ## 23. Enhancing ngIf with an Else Condition
 
-**local reference** (read later) is like a variable refering to a DOM ele in a template. **local reference** is declared using `#` keyword.
+**local reference** is like a variable returning the DOM object of an HTML ele/component which it is attached to. a **local reference** is declared using `#` keyword & is available to all HTML eles/components.
 
 ```html
 <input type="text" #firstNameInput>
@@ -443,7 +454,7 @@ show(lastName: HTMLInputElement){
 
 ## 24. Styling Elements Dynamically with ngStyle
 
-**attribute directive** are ones used just like an attribute of an component.
+**attribute directive** are ones used just like an attribute of an component & used to change properties of DOM eles.
 
 **property binding for directive**: `property binding` can be utilized so as to set value of a property of a `directive` by just put the target `directive` into a pair of `[]`. Then, we will assign the `directive` to an `object` whose properties presents the ones of the `directive`.
 
@@ -669,4 +680,255 @@ nothing
 nothing
 
 ## 9. Understanding View Encapsulation
+a style file of a component only apply css to the component containing it, it won't have effects to other components, event the component's `child component`. This behavior is called: `View Encapsulation`.
+
+## 10. More on View Encapsulation
+to change the behavior of the `View Encapsulation`, we need to add `encapsulation` property to a component's decorator & set it to one of 3 properties:
+
+1. `Emulated` (the default value): restrict the effects of style files of a component to only have effects of the component containing it.
+
+2. `None`: the style of a component will have effect to all components, including parent & child ones.
+
+3. `ShadowDom` (not so useful), it works like `Emulated`. Thus, for browser supporting `shadowDOM` only.
+
+of `ViewEncapsulation` object (a property of `@angular/core`).
+
+```ts
+import {
+    Component,
+    ViewEncapsulation
+} from '@angular/core';
+
+@Component({
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css'],
+    encapsulation: ViewEncapsulation.None
+})
+export class AppComponent {
+}
+```
+
+## 11. Using Local References in Templates
+
+disable auto format `html` in order to break line manually.
+
+**local reference** is like a variable returning the DOM object of an HTML ele/component which it is attached to. a **local reference** is declared using `#` keyword & is available to all HTML eles/components.
+
+```html
+<input
+    type="text"
+    class="form-control"
+    #serverNameInput
+>
+<button
+    class="btn btn-primary"
+    (click)="onAddServer(serverNameInput)"
+>Add Server</button>
+```
+
+```ts
+ onAddServer(serverNameInput) {
+    // *** serverNameInput will return the DOM object of the 'input' element above
+    console.log(serverNameInput);
+}
+```
+
+## 12. Getting Access to the Template & DOM with @ViewChild
+
+`@ViewChild` is used to retrieve DOM object of a child ele/component of a component via the `local reference` of the child ele/component or the name of it's class. This decorator returns an object with type of `ElementRef`, an Angular's Object (log to see more).
+
+```ts
+@ViewChild(
+    'serverContentInput', // *** local reference
+    { static: true } // *** this will
+) serverContentInput;
+
+// *** ==============================
+
+@ViewChild(
+    CockpitComponent, // *** the name of a component's class
+    { static: true } // *** read later
+) serverContentInput;
+```
+
+## 13. Projecting Content into Components with ng-content
+
+`Projecting` in Angular is a technique used to pass a component to another one. Angular provides us `<ng-content></ng-content>` component which works similarly how `children` props works in ReactJS to implement `Projecting` to our project.
+
+_`app-panel`_ component
+```html
+<div class="panel-body">
+    <ng-content></ng-content>
+</div>
+```
+
+_`app-root`_ component
+```html
+<app-panel>
+    <h1>Head 1</h1>
+</app-panel>
+```
+
+## 14. Understanding the Component Lifecycle
+
+1. `ngOnChanges`: runs when the value of an `input property` is set or updated (this hook is only called when it meets above conditions & after the input properties is `initialized`).
+
+2. `ngOnInit`: is a lifecycle hook only called once after all properties of a component are completely binded. However, the template of the component is not rendered yet.
+ This one is diffirent from `constructor` which is not a lifecycle hook. The `constructor` is just a default method of a class called when an instance of a class is instantiated.
+Because `constructor` is a lifecycle hook. Therefore, when we call an input property which has not yet be assigned to any value will return `undefined`. On the other hand, since the `ngOnInit` is called after all properties are binded, we can get the latest value of all properties.
+
+3. `ngDoCheck`: read more.
+
+4. `ngAfterContentInit`: `Content` is what is passed as children to a component via `<ng-content>`.
+this lifecycle hook is called after a content is projected to a component's view.
+Read more about why this hook is called when a component first init without calling `<ng-content>`.
+
+5. `ngAfterContentChecked`: read more.
+
+6. `ngAfterViewInit`: `View` is the template of the current component.
+This lifecycle hook is called after the component view & child views are initialized.
+
+7. `ngAfterViewChecked`: read more.
+
+8. `ngOnDestroy`: Cleanup just before Angular destroys the directive/component. Unsubscribe Observables and detach event handlers to avoid memory leaks.
+ 
+## 15. Seeing Lifecycle Hooks in Action
+
+nothing.
+
+## 16. Lifecycle Hooks and Template Access
+
+since a `local reference` is available only when the component it is attached to is rendered, we can not access it from `ngOnInit`, in this kind of case, we need to use `ngAfterViewInit`.
+
+## 17. Getting Access to ng-content with @ContentChild
+
+just like `@ViewChild` but for `Content` of a component.
+
+## 17. Wrap Up
+
+nothing
+
+## 18. [OPTIONAL] Assignment Solution
+
+nothing
+
+# `6. Course Project - Components & Databinding`
+
+## 1. Introduction
+
+nothing
+
+## 2. Adding Navigation with Event Binding and ngIf
+
+nothing
+
+## 3. Passing Recipe Data with Property Binding
+
+nothing
+
+## 4. Passing Data with Event and Property Binding (Combined)
+
+we can create property for a component right inside it's template.
+
+```html
+<!--
+    *** selectedRecipe is not defined in this component's class
+        but we can create & utilize it here
+--> 
+<button (click)="selectedRecipe = $event">
+    test
+</button>
+<span *ngIf="selectedRecipe"></span>
+```
+
+## 5. Allowing the User to Add Ingredients to the Shopping List
+
+nothing
+
+# `7. Directives Deep Dive`
+
+## 1. Module Introduction
+
+1. `attribute directives`: change properties of DOM eles. one ele can have many `attribute directives`.
+
+2. `structural directives`: change the structure of DOM eles. one ele can not have more than 1 `structural directive`.
+
+## 2. ngFor and ngIf Recap
+
+nothing
+
+## 3. ngClass and ngStyle Recap
+
+nothing
+
+## 4. Creating a Basic Attribute Directive
+
+create a basic `attribute directive`:
+
+1. `Directive` decorator:
+
+set it's selector to: `attribute selector`
+
+```ts
+import { Directive } from '@angular/core';
+
+@Directive({
+  selector: '[appBasicHighlight]'
+})
+```
+
+2. inject `ElementRef` service:
+
+this service lets us access to the DOM ele that the `directive` is attached to via an instance of the `ElementRef` interface.
+
+```ts
+import { Directive, ElementRef, OnInit } from '@angular/core';
+
+@Directive({
+    selector: '[appBasicHighlight]'
+})
+export class BasicHighLightDirective implements OnInit {
+    constructor(
+        private elementRef: ElementRef
+    ) {
+    }
+    
+    ngOnInit() {
+        this.elementRef.nativeElement.style.backgroundColor = 'green';
+    }
+}
+```
+
+3. `import` the newly created directive:
+
+import the newly created directive to `app.module.ts` file similarly to how we import components.
+
+```ts
+@NgModule({
+    declarations: [
+        ...,
+        BasicHighLightDirective
+    ],
+    ...
+})
+```
+
+4. `use it`:
+
+```html
+<p appBasicHighlight>test</p>
+```
+
+## 5. Using the Renderer to build a Better Attribute Directive
+
 [continue here]
+
+
+
+
+
+
+
+
+

@@ -6,9 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  currentRoute: string = 'recipe';
-
-  onNavigate(route: string) {
-    this.currentRoute = route;
-  }
+  title = 'custom-directives';
 }
