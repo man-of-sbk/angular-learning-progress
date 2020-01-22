@@ -922,7 +922,7 @@ import the newly created directive to `app.module.ts` file similarly to how we i
 
 ## 5. Using the Renderer to build a Better Attribute Directive
 
-[continue here]
+[continue here - the project for this folder is: 'custom-directives', it's diffirent from the one from the course !. Just consider this one to be a much simpler version of the project in the course !]
 
 
 
