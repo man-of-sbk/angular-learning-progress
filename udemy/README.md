@@ -922,7 +922,252 @@ import the newly created directive to `app.module.ts` file similarly to how we i
 
 ## 5. Using the Renderer to build a Better Attribute Directive
 
-[continue here - the project for this folder is: 'custom-directives', it's diffirent from the one from the course !. Just consider this one to be a much simpler version of the project in the course !]
+distinct from the class in the video no.4 above, in this one, we do not change style of DOM eles directly via `ElementRef`. Instead, we use `Renderer2`.
+
+```ts
+import {
+  Directive,
+  Renderer2,
+  OnInit,
+  ElementRef
+} from '@angular/core';
+
+@Directive({
+  selector: '[appBetterHighlight]'
+})
+export class BetterHighlightDirective implements OnInit {
+
+  constructor(
+    private elRef: ElementRef,
+    private renderer: Renderer2
+  ) { }
+
+  ngOnInit() {
+    this.renderer.setStyle(
+      this.elRef.nativeElement,
+      'background-color',
+      'blue'
+    );
+  }
+}
+```
+
+according to some researches, manipulate `Renderer2` is the best approach to access DOM since it could prevent XSS attachs & be able to develop apps that can be rendered on a variety of platforms that do not allow direct DOM access like `server`, `web worker` or `native mobile`.
+
+## 6. Using HostListener to Listen to Host Events
+
+we could manipulate `HostListener decorator` so as to be able to trigger `events` offered by DOM api.
+
+```ts
+@Directive({
+  selector: '[appBetterHighlight]'
+})
+export class BetterHighlightDirective implements OnInit {  
+  @HostListener('mouseenter') mouseover() {
+    this.renderer.setStyle(
+      this.elRef.nativeElement,
+      'background-color',
+      'blue'
+    );
+  }
+
+  @HostListener('mouseleave') mouseleave() {
+    this.renderer.setStyle(
+      this.elRef.nativeElement,
+      'background-color',
+      'transparent'
+    );
+  }
+
+  constructor(
+    private elRef: ElementRef,
+    private renderer: Renderer2
+  ) { }
+}
+```
+
+## 7. Using HostBinding to Bind to Host Properties
+
+there is a better approach of setting a property of a DOM ele in `directive`, that is laveraging `HostBinding directive`.
+
+```ts
+@Directive({
+  selector: '[appBetterHighlight]'
+})
+export class BetterHighlightDirective implements OnInit {
+  // *** set the `backgroundColor` property of the `style` property of the DOM ele having this directive 
+  @HostBinding('style.backgroundColor') backgroundColor: string;
+
+  @HostListener('mouseenter') mouseover() {
+    this.backgroundColor = 'blue';
+  }
+
+  @HostListener('mouseleave') mouseleave() {
+    this.backgroundColor = 'transparent';
+  }
+}
+```
+
+we can set any property of the DOM ele that we want
+
+```ts
+@Directive({
+  selector: '[appBetterHighlight]'
+})
+export class BetterHighlightDirective implements OnInit {
+  @HostBinding('id') id: string = 'abcd';
+
+  @HostListener('mouseenter') mouseover() {
+    this.id = 'blue';
+  }
+
+  @HostListener('mouseleave') mouseleave() {
+    this.id = 'transparent';
+  }
+}
+```
+
+## 8. Binding to Directive Properties
+
+we can create `input properties` for `directive` using `Input decorator`. The `input properties` created in a `directive` will be used as if they are `input properties` of the DOM ele using the `directive`.
+
+_class:_
+```ts
+@Directive({
+  selector: '[appBetterHighlight]'
+})
+export class BetterHighlightDirective implements OnInit {
+  @Input() defaultColor: string = 'transparent';
+  @Input() highlightColor: string = 'blue';
+
+  @HostBinding('style.backgroundColor') backgroundColor: string = this.defaultColor;
+
+  @HostListener('mouseenter') mouseover() {
+    this.backgroundColor = this.highlightColor;
+  }
+
+  @HostListener('mouseleave') mouseleave() {
+    this.backgroundColor = this.defaultColor;
+  }
+
+  ngOnInit() {
+  }
+}
+```
+
+_template:_
+
+```html
+<p
+  appBetterHighlight
+  defaultColor="orange"
+  highlightColor="red"
+>
+    with better-highlight directive
+</p>
+```
+
+## 9. What Happens behind the Scenes on Structural Directives
+
+a structural directives are a short hand for a combination of `ng-template` & `input property`.
+
+below is the actual form of `*ngIf` directive.
+
+```html
+<ng-template [ngIf]="true">
+    <p>aaa</p>
+</ng-template>
+```
+
+## 10. Building a Structural Directive
+
+** ===== READ the video no.9 BEFORE READ this ===== **
+
+a `view container` is an element holding sub-elements in the `template` of a component. For instance, if we have a component whose `selector` is `app-what-is-view-container` then, it's `view container` is `<app-what-is-view-container></app-what-is-view-container>`. The data type of a `view container` is `ViewContainerRef` object.
+
+`TemplateRef` contains what is inside `<ng-template>`.
+
+`<ng-template>` is implemented automatically to classes coming with `Directive` decorator & being utilized as structural directives.
+
+`setters` in are called when the property related to them is assigned to a value.
+
+below is how to create a structural directive":
+
+_class:_
+
+```ts
+import {
+  Directive,
+  Input,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core';
+
+@Directive({
+  selector: '[appUnless]'
+})
+export class UnlessDirective {
+  // *** `setter` of `appUnless` property
+  @Input() set appUnless(condition: boolean) {
+    if (!condition) {
+      this.viewContainerRef.createEmbeddedView(this.templateRef);
+    } else {
+      this.viewContainerRef.clear();
+    }
+  };
+
+  constructor(
+    private templateRef: TemplateRef<any>,
+    private viewContainerRef: ViewContainerRef
+  ) { }
+}
+```
+
+_html:_
+
+```html
+<p *appUnless="false">with `unless` structural directive</p>
+```
+
+## 11. Understanding ngSwitch
+
+read `ngSwitch` in document.
+
+# `8. Course Project - Directives`
+
+## 1. Building and Using a Dropdown Directive
+
+handle `outside click` in angular
+
+```ts
+import {
+  Directive,
+  HostListener,
+  HostBinding,
+  ElementRef
+} from '@angular/core';
+
+@Directive({
+  selector: '[appDropdown]'
+})
+export class DropdownDirective {
+  @HostBinding('class.open') isOpen: boolean = false;
+  
+  // *** trigger `click` event of `document`
+  @HostListener('document:click', ['$event.target']) clickOutside(target) {
+    const clickedInside = this.eleRef.nativeElement.contains(target);
+
+    this.isOpen = !clickedInside ? false : !this.isOpen;
+
+  }
+
+  constructor(private eleRef: ElementRef) { }
+}
+```
+
+# `9. Using Services & Dependency Injection`
+
+## 1. Module Introduction
 
 
 
