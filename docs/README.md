@@ -71,6 +71,7 @@ Like ones in ReactJS. A component in Angular consists of 3 things:
 3. **component styles**: define css of a component.
 
 ## 4. Input
+
 ### component class:
 `@Component` **decorator** indicates a class is a component providing metadata about a component including: selector, templates, styles, ....
 
